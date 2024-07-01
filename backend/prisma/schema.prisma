@@ -22,7 +22,10 @@ model User {
     email String @unique
     password String
 
-    name String @unique
+    nickName String @unique @map("nick_name")
+    firstName String
+    lastName String
+    middleName String
     avatarPath String @default(".uploads/default_avatar.png") @map("avatar_path")
 
     @@map("user")

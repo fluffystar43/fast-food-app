@@ -23,9 +23,9 @@ model User {
     password String
 
     nickName String @unique @map("nick_name")
-    firstName String
-    lastName String
-    middleName String
+    firstName String @map("first_name")
+    lastName String @map("last_name")
+    middleName String? @map("middle_name")
     avatarPath String @default(".uploads/default_avatar.png") @map("avatar_path")
 
     @@map("user")

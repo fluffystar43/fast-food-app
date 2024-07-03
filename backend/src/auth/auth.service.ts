@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { AuthDto } from './dto/auth.dto';
 import { hash } from 'argon2';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +13,7 @@ export class AuthService {
 	) {}
 
 	async register(dto: AuthDto) {
-		const existUser = this.prisma.user.findUnique({
+		const existUser = await this.prisma.user.findUnique({
 			where: {
 				email: dto.email
 			}
@@ -34,7 +35,12 @@ export class AuthService {
 			}
 		});
 
-		return newUser;
+		const tokens = await this.issueTokens(newUser.id);
+
+		return {
+			user: this.returnUserFields(newUser),
+			...tokens
+		};
 	}
 
 	private async issueTokens(userId: string) {
@@ -49,5 +55,12 @@ export class AuthService {
 		});
 
 		return { accessToken, refreshToken };
+	}
+
+	private returnUserFields(user: User) {
+		return {
+			id: user.id,
+			email: user.email
+		};
 	}
 }
